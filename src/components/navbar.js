@@ -7,7 +7,7 @@ const Navbar = () => {
     <nav className="navbar">
       <h1 className="logo">Faith-Hub</h1>
       <ul className="nav-links">
-        <li><Link to="/faith-hub">Home</Link></li>
+        <li><Link to="/">Home</Link></li>
         <li><Link to="/faithchristianliving">Faith & Christian Living</Link></li>
         <li><Link to="/churchleadership">Church & Leadership</Link></li>
         <li><Link to="/biblicalbooks">Biblical Books & Teachings</Link></li>

@@ -10,7 +10,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/:pageId" element={<Sermons />} />
-        <Route path="/faith-hub" element={<Home />} />
+        <Route path="/" element={<Home />} />
       </Routes>
     </Router>
   );

@@ -127,7 +127,9 @@ const Sermons = () => {
       setLoadingSermons(true);
       try {
         const url =
-          `https://faith-hub-backend.onrender.com/api/videos/${encodeURIComponent(searchQuery)}?page=${page}&limit=${limit}&sort=${sortOrder}`;
+          `https://faith-hub-backend.onrender.com/api/videos/${encodeURIComponent(
+            searchQuery
+          )}?page=${page}&limit=${limit}&sort=${sortOrder}`;
         const response = await fetch(url);
         const data = await response.json();
 
@@ -171,7 +173,13 @@ const Sermons = () => {
           {pageConfig.subcategories?.map((subcat) => (
             <button
               key={subcat}
-              onClick={() => {
+              onClick={(e) => {
+                // If this subcategory is already active, do nothing
+                if (activeSubcat === subcat) {
+                  e.preventDefault();
+                  return;
+                }
+                // Otherwise, update the filter and reset state
                 setActiveSubcat(subcat);
                 setSearchQuery(subcat);
                 setPage(1); // Reset page when switching category
@@ -188,7 +196,11 @@ const Sermons = () => {
       {/* Sorting Buttons */}
       <div className="sorting-buttons">
         <button
-          onClick={() => {
+          onClick={(e) => {
+            if (sortOrder === "likeCount") {
+              e.preventDefault();
+              return;
+            }
             setSortOrder("likeCount");
             setPage(1);
             setSermons([]);
@@ -198,7 +210,11 @@ const Sermons = () => {
           {sortOrderLabels.likeCount}
         </button>
         <button
-          onClick={() => {
+          onClick={(e) => {
+            if (sortOrder === "viewCount") {
+              e.preventDefault();
+              return;
+            }
             setSortOrder("viewCount");
             setPage(1);
             setSermons([]);
@@ -208,7 +224,11 @@ const Sermons = () => {
           {sortOrderLabels.viewCount}
         </button>
         <button
-          onClick={() => {
+          onClick={(e) => {
+            if (sortOrder === "publishedAt") {
+              e.preventDefault();
+              return;
+            }
             setSortOrder("publishedAt");
             setPage(1);
             setSermons([]);
@@ -218,7 +238,11 @@ const Sermons = () => {
           {sortOrderLabels.publishedAt}
         </button>
         <button
-          onClick={() => {
+          onClick={(e) => {
+            if (sortOrder === "commentCount") {
+              e.preventDefault();
+              return;
+            }
             setSortOrder("commentCount");
             setPage(1);
             setSermons([]);

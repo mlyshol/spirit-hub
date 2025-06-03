@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./sermons.css";
 
-// Utility function to decode HTML entities
+// ----------------------
+// Utility Functions
+// ----------------------
+
+// Decode HTML entities from a string (used for video titles)
 const decodeHtmlEntities = (str) => {
   const doc = new DOMParser().parseFromString(str, "text/html");
   return doc.documentElement.textContent;
 };
 
-// Utility function to format numbers (K, M, B)
+// Format numbers into K, M, B when needed
 const formatNumber = (num) => {
   if (!num) return "0";
   if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";
@@ -17,37 +21,40 @@ const formatNumber = (num) => {
   return num.toString();
 };
 
-// Utility function to format the published date as MM/DD/YYYY
+// Format a date string as MM/DD/YYYY
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const date = new Date(dateStr);
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   const year = date.getFullYear();
   return `${month}/${day}/${year}`;
 };
 
+// ----------------------
+// Sermons Component
+// ----------------------
 const Sermons = () => {
   const { pageId } = useParams();
 
-  // State for page configuration
+  // Page configuration state
   const [pageConfig, setPageConfig] = useState(null);
   const [loadingConfig, setLoadingConfig] = useState(true);
 
-  // State for MongoDB sermons and pagination
+  // Sermons and pagination state
   const [page, setPage] = useState(1);
   const [sermons, setSermons] = useState([]);
   const [loadingSermons, setLoadingSermons] = useState(false);
 
-  // States for sorting, search query, and active subcategory
+  // Sorting, search, and category states
   const [sortOrder, setSortOrder] = useState("likeCount");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSubcat, setActiveSubcat] = useState("");
 
-  // New state: dynamic limit based on screen size
+  // Dynamic limit based on screen size
   const [limit, setLimit] = useState(6);
 
-  // Mapping sort keys to display labels
+  // Mapping for sort labels to display text
   const sortOrderLabels = {
     likeCount: "Most Liked",
     viewCount: "Most Viewed",
@@ -55,7 +62,9 @@ const Sermons = () => {
     commentCount: "Most Comments",
   };
 
-  // Listen for window resize to update the limit dynamically
+  // ----------------------
+  // Dynamic Limit on Resize
+  // ----------------------
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -69,24 +78,25 @@ const Sermons = () => {
     };
 
     window.addEventListener("resize", handleResize);
-    // Set initial limit based on current window width:
-    handleResize();
+    handleResize(); // Set initial limit
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Fetch page configuration on pageId change
+  // ----------------------
+  // Fetch Page Configuration
+  // ----------------------
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const response = await fetch(`https://faith-hub-backend.onrender.com/api/pages/${pageId}`);
+        const response = await fetch(
+          `https://faith-hub-backend.onrender.com/api/pages/${pageId}`
+        );
         const configData = await response.json();
-        setPageConfig(configData);
 
-        // Use the default sort (or "likeCount" as fallback)
+        setPageConfig(configData);
         setSortOrder(configData.defaultSort || "likeCount");
 
-        // Set active subcategory and search query
         if (configData.subcategories?.length > 0) {
           setActiveSubcat(configData.subcategories[0]);
           setSearchQuery(configData.subcategories[0]);
@@ -103,25 +113,25 @@ const Sermons = () => {
     fetchConfig();
   }, [pageId]);
 
-  // Reset sermons and pagination when pageId changes
+  // Reset sermons and pagination when the page configuration changes
   useEffect(() => {
     setSermons([]);
     setPage(1);
   }, [pageId]);
 
-  // Fetch sermons when searchQuery, sortOrder, page, or limit changes
+  // ----------------------
+  // Fetch Sermons Based on Query, Sort, and Pagination
+  // ----------------------
   useEffect(() => {
     const fetchSermons = async () => {
       setLoadingSermons(true);
       try {
-        const response = await fetch(
-          `https://faith-hub-backend.onrender.com/api/videos/${encodeURIComponent(
-            searchQuery
-          )}?page=${page}&limit=${limit}&sort=${sortOrder}`
-        );
+        const url =
+          `https://faith-hub-backend.onrender.com/api/videos/${encodeURIComponent(searchQuery)}?page=${page}&limit=${limit}&sort=${sortOrder}`;
+        const response = await fetch(url);
         const data = await response.json();
 
-        // For commentCount sorting, ensure numeric conversion and proper sorting.
+        // If sorting by comment count require numeric conversion & sorting
         let sortedData = data;
         if (sortOrder === "commentCount") {
           sortedData = data
@@ -145,6 +155,9 @@ const Sermons = () => {
     }
   }, [searchQuery, sortOrder, page, limit]);
 
+  // ----------------------
+  // Render
+  // ----------------------
   if (loadingConfig) return <p>Loading page configuration...</p>;
   if (!pageConfig) return <p>Error: Page configuration not found.</p>;
 
@@ -161,8 +174,8 @@ const Sermons = () => {
               onClick={() => {
                 setActiveSubcat(subcat);
                 setSearchQuery(subcat);
-                setPage(1); // Reset page when changing category
-                setSermons([]); // Clear old sermons when changing category
+                setPage(1); // Reset page when switching category
+                setSermons([]); // Clear current sermons
               }}
               className={`btn-category ${activeSubcat === subcat ? "active" : ""}`}
             >
@@ -182,7 +195,7 @@ const Sermons = () => {
           }}
           className={`btn-sort ${sortOrder === "likeCount" ? "active" : ""}`}
         >
-          Most Liked
+          {sortOrderLabels.likeCount}
         </button>
         <button
           onClick={() => {
@@ -192,7 +205,7 @@ const Sermons = () => {
           }}
           className={`btn-sort ${sortOrder === "viewCount" ? "active" : ""}`}
         >
-          Most Viewed
+          {sortOrderLabels.viewCount}
         </button>
         <button
           onClick={() => {
@@ -202,7 +215,7 @@ const Sermons = () => {
           }}
           className={`btn-sort ${sortOrder === "publishedAt" ? "active" : ""}`}
         >
-          Newest First
+          {sortOrderLabels.publishedAt}
         </button>
         <button
           onClick={() => {
@@ -212,7 +225,7 @@ const Sermons = () => {
           }}
           className={`btn-sort ${sortOrder === "commentCount" ? "active" : ""}`}
         >
-          Most Comments
+          {sortOrderLabels.commentCount}
         </button>
       </div>
 
@@ -237,7 +250,9 @@ const Sermons = () => {
             </div>
             <div className="video-stats">
               <p>
-                Views: {formatNumber(video.viewCount)} | Likes: {formatNumber(video.likeCount)} | Comments: {formatNumber(video.commentCount)} | Published: {formatDate(video.publishedAt)}
+                Views: {formatNumber(video.viewCount)} | Likes: {formatNumber(video.likeCount)}{" "}
+                | Comments: {formatNumber(video.commentCount)} | Published:{" "}
+                {formatDate(video.publishedAt)}
               </p>
             </div>
           </div>
@@ -245,7 +260,7 @@ const Sermons = () => {
       </div>
 
       {/* Load More Button */}
-      <button className="load-more-btn" onClick={() => setPage((prevPage) => prevPage + 1)}>
+      <button className="load-more-btn" onClick={() => setPage((prev) => prev + 1)}>
         Load More Sermons
       </button>
     </div>

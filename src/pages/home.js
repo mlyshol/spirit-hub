@@ -44,9 +44,9 @@ const Home = () => {
 
       {/* Site Information Section */}
       <section className="home-info">
-        <h2>Welcome to Faith‑Hub</h2>
+        <h2>Welcome to Spirit Hub</h2>
         <p>
-          Faith‑Hub is your destination for inspirational sermons designed to
+          Spirit Hub is your destination for inspirational sermons designed to
           empower and uplift your spiritual journey. Discover insightful
           teachings and messages that help you grow in faith and overcome life’s
           challenges.

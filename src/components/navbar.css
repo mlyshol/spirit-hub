@@ -69,24 +69,24 @@
   .hamburger {
     display: flex;
   }
-
   .nav-links {
-    position: absolute;
+    position: fixed;
     top: 60px;
-    right: 0;
+    right: -100%;         /* start completely off-screen */
+    width: 80%;           /* or whatever width you like */
+    max-width: 300px;     /* optional cap */
+    height: calc(100vh - 60px);
     background-color: #2C3E50;
     flex-direction: column;
-    width: 100%;
-    align-items: flex-start;
     padding: 20px;
     gap: 15px;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: right 0.3s ease-in-out;
     z-index: 1000;
+    overflow-y: auto;     /* in case your menu is tall */
   }
 
   .nav-links.active {
-    transform: translateX(0);
+    right: 0;             /* slide it flush into view */
   }
 }
 

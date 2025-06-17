@@ -20,13 +20,6 @@
   font-weight: bold;
 }
 
-.hero-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
-}
-
 .btn-category {
   padding: 12px 20px;
   border: none;
@@ -36,6 +29,8 @@
   color: black;
   border-radius: 5px;
   transition: background 0.3s;
+  flex: 0 0 auto;       
+  white-space: nowrap;
 }
 
 .btn-category:hover {
@@ -177,4 +172,39 @@
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
   transform: scale(1.05); /* Slight enlargement */
   color: white;
+}
+
+/* Make the hero button bar flexible & scrollable */
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;       /* allows wrapping onto multiple lines */
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+
+  /* optional: horizontal scroll if there's still overflow */
+  overflow-x: auto;
+  padding: 0 10px;       /* give some breathing room when scrolling */
+  -webkit-overflow-scrolling: touch;  /* smooth swipe on iOS */
+  scrollbar-width: none; /* hide Firefox scrollbar */
+}
+.hero-buttons::-webkit-scrollbar {
+  display: none;         /* hide WebKit scrollbar */
+}
+
+/* Ensure each button stays intact and doesn’t shrink */
+.btn-category {
+  flex: 0 0 auto;        /* do not grow or shrink */
+  white-space: nowrap;   /* prevent text wrapping inside the button */
+}
+
+/* On very narrow screens, stack them full-width if you prefer */
+@media (max-width: 400px) {
+  .hero-buttons {
+    flex-wrap: nowrap;   /* force single row */
+  }
+  .btn-category {
+    min-width: 120px;    /* or whatever min width works */
+    flex: 0 0 auto;
+  }
 }

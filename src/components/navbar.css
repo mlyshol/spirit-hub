@@ -89,3 +89,28 @@
     transform: translateX(0);
   }
 }
+
+/* Navbar logo */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  margin-right: auto;      /* pushes the hamburger/nav-links right */
+}
+
+.logo-img {
+  height: 60px;            /* adjust to taste */
+  width: auto;
+}
+
+/* Optional: tweak spacing on mobile */
+@media (max-width: 768px) {
+  .logo-img {
+    height: 32px;
+  }
+}
+
+.logo-txt {
+  color:white;
+  padding-left: 10px;
+}

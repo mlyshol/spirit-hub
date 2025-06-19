@@ -1,0 +1,8 @@
+# netlify.toml
+
+[build]
+  command   = "npm run build"     # runs `next build`
+  publish   = ".next"             # plugin will publish .next and functions
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

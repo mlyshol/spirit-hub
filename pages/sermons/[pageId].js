@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import Head from "next/head";
-import Sermons from "../../components/Sermons";
+import Sermons from "../../components/sermons";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE || 

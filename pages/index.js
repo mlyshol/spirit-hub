@@ -61,23 +61,7 @@ export default function Home() {
           content="Your destination for faith-driven media—uplifting sermons, thought-provoking podcasts, and community."
         />
       </Head>
-
-      <section style={hero}>
-        <div style={iframeWrap}>
-          <iframe
-            src={`https://www.youtube.com/embed/${featured.id}`}
-            title={featured.snippet.title}
-            allowFullScreen
-            style={iframe}
-          />
-        </div>
-        <h1>{featured.snippet.title}</h1>
-        <p>{featured.snippet.description}</p>
-        <Link href="/sermons/faithchristianliving" style={btn}>
-          Explore More Sermons
-        </Link>
-      </section>
-
+      
       <section style={info}>
         <h2>Welcome to The Spirit Hub</h2>
         <p>
@@ -94,6 +78,19 @@ export default function Home() {
           Start Exploring
         </Link>
       </section>
+      <section style={hero}>
+        <div style={iframeWrap}>
+          <iframe
+            src={`https://www.youtube.com/embed/${featured.id}`}
+            title={featured.snippet.title}
+            allowFullScreen
+            style={iframe}
+          />
+        </div>
+        <h1>{featured.snippet.title}</h1>
+        <p>{featured.snippet.description}</p>
+      </section>
+
     </>
   );
 }

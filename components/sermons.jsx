@@ -6,7 +6,6 @@ import styles from "../styles/sermons.module.css";
 // Utility Functions
 // ----------------------
 const decodeHtmlEntities = (str = "") => decode(str);
-
 const formatNumber = (num) => {
   if (!num) return "0";
   if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";
@@ -14,7 +13,6 @@ const formatNumber = (num) => {
   if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
   return num.toString();
 };
-
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const d = new Date(dateStr);
@@ -27,10 +25,14 @@ const formatDate = (dateStr) => {
 // Sermons Component
 // ----------------------
 const Sermons = ({ initialConfig, initialSermons }) => {
+  // config + data
   const [pageConfig] = useState(initialConfig);
   const [sermons, setSermons] = useState(initialSermons || []);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  // UI state
+  const [isMobile, setIsMobile] = useState(false);
   const [sortOrder, setSortOrder] = useState(
     initialConfig.defaultSort || "likeCount"
   );
@@ -49,10 +51,11 @@ const Sermons = ({ initialConfig, initialSermons }) => {
     commentCount: "Most Comments",
   };
 
-  // adjust items per page on resize
+  // detect mobile & adjust limits
   useEffect(() => {
     const onResize = () => {
       const w = window.innerWidth;
+      setIsMobile(w < 600);
       setLimit(w < 600 ? 4 : w < 1024 ? 6 : 8);
     };
     window.addEventListener("resize", onResize);
@@ -60,7 +63,7 @@ const Sermons = ({ initialConfig, initialSermons }) => {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // fetch sermons on subcat/sort/page change
+  // fetch on query/sort/page change
   useEffect(() => {
     if (page === 1 && sermons.length) return;
     setLoading(true);
@@ -78,71 +81,106 @@ const Sermons = ({ initialConfig, initialSermons }) => {
         }
         setSermons((prev) => [...prev, ...data]);
       })
-      .catch((err) => console.error(err))
+      .catch(console.error)
       .finally(() => setLoading(false));
   }, [searchQuery, sortOrder, page, limit]);
 
+  // handle subcategory change
+  const handleSubcatChange = (value) => {
+    setActiveSubcat(value);
+    setSearchQuery(value);
+    setPage(1);
+    setSermons([]);
+  };
+
+  // handle sort change
+  const handleSortChange = (value) => {
+    setSortOrder(value);
+    setPage(1);
+    setSermons([]);
+  };
+
   return (
     <div className={styles.sermonsContainer}>
-      {/* Hero */}
+      {/* Hero / Subcategory Selector */}
       <div className={styles.hero}>
         <h1>{pageConfig.title}</h1>
         <p>{pageConfig.description}</p>
 
-        <div className={styles.heroButtons}>
-          {pageConfig.subcategories?.map((subcat) => (
+        {isMobile ? (
+          <select
+            className={styles.mobileSelect}
+            value={activeSubcat}
+            onChange={(e) => handleSubcatChange(e.target.value)}
+          >
+            {pageConfig.subcategories?.map((subcat) => (
+              <option key={subcat} value={subcat}>
+                {subcat}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <div className={styles.heroButtons}>
+            {pageConfig.subcategories?.map((subcat) => (
+              <button
+                key={subcat}
+                aria-pressed={activeSubcat === subcat}
+                className={`${styles.btnCategory} ${
+                  activeSubcat === subcat ? styles.active : ""
+                }`}
+                onClick={() => handleSubcatChange(subcat)}
+              >
+                {subcat}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Sorting Selector */}
+      {isMobile ? (
+        <select
+          className={styles.mobileSelect}
+          value={sortOrder}
+          onChange={(e) => handleSortChange(e.target.value)}
+        >
+          {Object.entries(sortOrderLabels).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <div className={styles.sortingButtons}>
+          {Object.entries(sortOrderLabels).map(([key, label]) => (
             <button
-              key={subcat}
-              aria-pressed={activeSubcat === subcat}
-              className={`${styles.btnCategory} ${
-                activeSubcat === subcat ? styles.active : ""
+              key={key}
+              aria-pressed={sortOrder === key}
+              className={`${styles.btnSort} ${
+                sortOrder === key ? styles.active : ""
               }`}
-              onClick={() => {
-                setActiveSubcat(subcat);
-                setSearchQuery(subcat);
-                setPage(1);
-                setSermons([]);
-              }}
+              onClick={() => handleSortChange(key)}
             >
-              {subcat}
+              {label}
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Sorting */}
-      <div className={styles.sortingButtons}>
-        {Object.entries(sortOrderLabels).map(([key, label]) => (
-          <button
-            key={key}
-            aria-pressed={sortOrder === key}
-            className={`${styles.btnSort} ${
-              sortOrder === key ? styles.active : ""
-            }`}
-            onClick={() => {
-              setSortOrder(key);
-              setPage(1);
-              setSermons([]);
-            }}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      )}
 
       <h2>
         Showing “{activeSubcat}” — Sorted by {sortOrderLabels[sortOrder]}
       </h2>
 
-      {/* Grid */}
+      {/* Sermons Grid */}
       <div className={styles.sermonsGrid}>
         {sermons.map((video) => (
           <div key={video.videoId} className={styles.sermonCard}>
-            <div className={styles.videoFrame}>
+            <div className={styles.videoWrapper}>
               <iframe
                 src={`https://www.youtube.com/embed/${video.videoId}`}
                 title={decodeHtmlEntities(video.title)}
                 allowFullScreen
+                className={styles.responsiveIframe}
               />
             </div>
             <div className={styles.videoDetails}>
@@ -154,6 +192,17 @@ const Sermons = ({ initialConfig, initialSermons }) => {
               {formatNumber(video.commentCount)} | Published:{" "}
               {formatDate(video.publishedAt)}
             </div>
+            <button
+              className={styles.btnWatch}
+              onClick={() =>
+                window.open(
+                  `https://www.youtube.com/watch?v=${video.videoId}`,
+                  "_blank"
+                )
+              }
+            >
+              Watch
+            </button>
           </div>
         ))}
       </div>

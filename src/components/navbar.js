@@ -16,8 +16,8 @@ const Navbar = () => {
     <nav className="navbar">
        {/* Logo as link */}
       <Link to="/" className="logo" onClick={closeMenu}>
-        <img src={logo} alt="The Spirit Hub" className="logo-img" />
-        <h1 className="logo-txt"> The Spirit Hub</h1>
+        <img src={logo} alt="The Spirit Hub Test" className="logo-img" />
+        <h1 className="logo-txt"> The Spirit Hub Test</h1>
       </Link>
       <div className="hamburger" onClick={toggleMenu}>
         <div className={`bar ${menuOpen ? "open" : ""}`}></div>

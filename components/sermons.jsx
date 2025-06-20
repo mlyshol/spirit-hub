@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { decode } from "html-entities";
 import styles from "../styles/sermons.module.css";
+import Link from 'next/link';
 
 const decodeHtmlEntities = (str = "") => decode(str);
 const formatNumber = (n) =>
@@ -125,33 +126,34 @@ export default function Sermons({ initialConfig, initialSermons }) {
       </h2>
 
       <div className={styles.sermonsGrid}>
-        {sermons.map((v) => (
-          <div key={v.videoId} className={styles.sermonCard}>
-            <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%", marginBottom: "1rem" }}>
-              <iframe
-                src={`https://www.youtube.com/embed/${v.videoId}`}
-                title={decodeHtmlEntities(v.title)}
-                allowFullScreen
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  border: 0,
-                  borderRadius: 8,
-                }}
-              />
-            </div>
-            <div className={styles.videoDetails}>
-              <h3>{decodeHtmlEntities(v.title)}</h3>
-            </div>
-            <div className={styles.videoStats}>
-              Views: {formatNumber(v.viewCount)} | Likes: {formatNumber(v.likeCount)} | Comments: {formatNumber(v.commentCount)} | Published: {formatDate(v.publishedAt)}
-            </div>
-          </div>
-        ))}
+    {sermons.map((v) => (
+      <div key={v.videoId} className={styles.sermonCard}>
+      <Link href={`/watch/${v._id}`}>
+      {/* Thumbnail Image */}
+        <div className={styles.thumbnailWrapper}>
+          <img
+            src={`https://img.youtube.com/vi/${v.videoId}/hqdefault.jpg`}
+            alt={decodeHtmlEntities(v.title)}
+            className={styles.thumbnail}
+          />
+        </div>
+       </Link>
+      
+        <div className={styles.videoDetails}>
+          <h3>{decodeHtmlEntities(v.title)}</h3>
+        </div>
+
+      {/* Watch Button */}
+      <Link href={`/watch/${v._id}`}>
+      <div className={styles.watchNow}>
+        <div className={styles.watchButton}>
+          Watch Now
+        </div>
       </div>
+      </Link>
+    </div>
+  ))}
+</div>
 
       <button
         className={styles.loadMoreBtn}

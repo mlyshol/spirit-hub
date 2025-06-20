@@ -28,7 +28,7 @@ export default function Layout({ children, pageTitle, pageDescription }) {
 
       <footer style={{ textAlign: "center", padding: "2rem 0", color: "#666" }}>
         &copy; {new Date().getFullYear()} The Spirit Hub
-        <ins class="CANBMDDisplayAD" data-bmd-ad-unit="1219220520250620T142018403D8CD860AA710400BA7BB613989C34002" style="display:block"></ins>
+        <ins class="CANBMDDisplayAD" data-bmd-ad-unit="1219220520250620T142018403D8CD860AA710400BA7BB613989C34002" style={{display:"block"}}></ins>
         <script src="https://secureaddisplay.com/au/bmd/"></script>
       </footer>
     </>

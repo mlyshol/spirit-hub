@@ -1,7 +1,6 @@
 // components/Layout.jsx
 import React from "react";
 import Head from "next/head";
-import Script from "next/script";
 import Navbar from "./navbar";
 
 export default function Layout({ children, pageTitle, pageDescription }) {
@@ -20,10 +19,6 @@ export default function Layout({ children, pageTitle, pageDescription }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" />
       </Head>
-      <Script>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6903604640424521"
-     crossorigin="anonymous"></script>
-      </Script>
 
       <Navbar />
 

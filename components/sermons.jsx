@@ -28,8 +28,8 @@ export default function Sermons({ initialConfig, initialSermons }) {
   const sortOrderLabels = {
     likeCount: "Most Liked",
     viewCount: "Most Viewed",
-    publishedAt: "Newest First",
     commentCount: "Most Comments",
+    random: "Random",
   };
 
   useEffect(() => {
@@ -53,6 +53,12 @@ export default function Sermons({ initialConfig, initialSermons }) {
           data = data.map((v) => ({ ...v, commentCount: parseInt(v.commentCount) || 0 }))
                      .sort((a, b) => b.commentCount - a.commentCount);
         }
+        else if (sortOrder === "random") {
+          for (let i = data.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [data[i], data[j]] = [data[j], data[i]];}
+        }
+
         setSermons((prev) => [...prev, ...data]);
       })
       .catch(console.error)
@@ -60,6 +66,7 @@ export default function Sermons({ initialConfig, initialSermons }) {
   }, [searchQuery, sortOrder, page, limit]);
 
   const handleSubcat = (val) => {
+    if (val === activeSubcat) return;     
     setActiveSubcat(val);
     setSearchQuery(val);
     setPage(1);
@@ -67,6 +74,7 @@ export default function Sermons({ initialConfig, initialSermons }) {
   };
 
   const handleSort = (val) => {
+    if (val === sortOrder) return;
     setSortOrder(val);
     setPage(1);
     setSermons([]);

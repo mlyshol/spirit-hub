@@ -12,11 +12,11 @@ export async function getStaticPaths() {
   const text = await res.text();
   if (!res.ok) {
     console.error("getStaticPaths: expected JSON but got:", text);
-    return { paths: [], fallback: "blocking" };
+    return { paths: [], fallback: true };
   }
   const pages = JSON.parse(text);
   const paths = pages.map((p) => ({ params: { pageId: p.id } }));
-  return { paths, fallback: "blocking" };
+  return { paths, fallback: true };
 }
 
 export async function getStaticProps({ params }) {

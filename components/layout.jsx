@@ -2,6 +2,7 @@
 import React from "react";
 import Head from "next/head";
 import Navbar from "./navbar";
+import { FaFacebookSquare, FaYoutubeSquare } from "react-icons/fa";
 
 export default function Layout({ children, pageTitle, pageDescription }) {
   const title = pageTitle
@@ -28,6 +29,27 @@ export default function Layout({ children, pageTitle, pageDescription }) {
 
       <footer style={{ textAlign: "center", padding: "2rem 0", color: "#666" }}>
         &copy; {new Date().getFullYear()} The Spirit Hub
+        <div style={{ marginTop: "1rem", fontSize: "1.5rem" }}>
+          <a
+            href="https://www.facebook.com/profile.php?id=61577753076153"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+            style={{ color: "#666", margin: "0 0.5rem" }}
+          >
+            <FaFacebookSquare />
+          </a>
+
+          <a
+            href="https://www.youtube.com/@thespirithubyt"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube"
+            style={{ color: "#666", margin: "0 0.5rem" }}
+          >
+            <FaYoutubeSquare />
+          </a>
+        </div>
         <ins class="CANBMDDisplayAD" data-bmd-ad-unit="1219220520250620T142018403D8CD860AA710400BA7BB613989C34002" style={{display:"block"}}></ins>
         <script src="https://secureaddisplay.com/au/bmd/"></script>
       </footer>
